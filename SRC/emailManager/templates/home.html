@@ -1,0 +1,54 @@
+{% extends 'layout/_base.html' %}
+{% block title %}Home{% endblock title %}
+{% block nav-style %}mkt-nav{% endblock nav-style %}
+{% load static %}
+{% block content %}
+
+    {# Hero Section #}
+
+    {# Main Section #}
+        {% if user.is_authenticated %}
+                            <li data-g-event="cta:hero" data-g-label="sign-in-to-inbox" class="hero__cta--secondary"><a href="{% url 'user_logout' %}">Logout</a></li>
+                            <li><a href="#"
+                                   class="p-r-none">Accounts</a></li>
+                        {% else %}
+<!--                            <li><a href="">Login</a></li>-->
+<!--                            <li><a href="" class="p-r-none">Sign Up</a></li>-->
+                                <div class="hero ">
+                                          <div class="content-section">
+                                            <div class="hero__image">
+                                                <video src="https://www.google.com/inbox/assets/static/images/animation.mp4" type="video/mp4" autoplay muted>
+                                                  <img src="https://www.google.com/inbox/assets/static/images/animation.png">
+                                                </video>
+                                            </div>
+                                          </div>
+                                            <div class="hero__content">
+                                    <h1 class="hero__title">
+                                          <span class="hero__title-part">Inbox is signing off.</span>
+                                          <span class="hero__title-part">Find your favorite<br>features in the new Gmail.</span>
+                                    </h1>
+                                    <div class="hero__body">
+                                      <p>We are saying goodbye to Inbox at the end of March 2019. While we were here, we found a new way to email with ideas like snooze, nudges, Smart Reply and more.</p> <p>That’s why we’ve brought your favorite features to Gmail to help you get more done. All your conversations are already waiting for you. See you there.</p>
+                                    </div>
+                                    <div class="hero__cta">
+                                      <a data-g-event="cta:hero" data-g-label="try-the-new-gmail" class="hero__cta--web hero__cta--primary" href="{% url 'user_register' %}">
+                                        Try the new Email
+                                      </a>
+                                      <a data-g-event="cta:hero" data-g-label="try-the-new-gmail" class="hero__cta--android hero__cta--primary" href="{% url 'user_register' %}">
+                                        Try the new Email
+                                      </a>
+                                      <a data-g-event="cta:hero" data-g-label="try-the-new-gmail" class="hero__cta--ios hero__cta--primary" href="{% url 'user_register' %}">
+                                        Try the new Email
+                                      </a>
+                                      <div>
+                                        <a data-g-event="cta:hero" data-g-label="sign-in-to-inbox" class="hero__cta--secondary" href="{% url 'user_login' %}">
+                                          Sign in to Inbox
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                        {% endif %}
+
+
+{% endblock content %}
