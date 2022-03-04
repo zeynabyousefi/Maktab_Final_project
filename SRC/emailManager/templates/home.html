@@ -9,11 +9,9 @@
     {# Main Section #}
         {% if user.is_authenticated %}
                             <li data-g-event="cta:hero" data-g-label="sign-in-to-inbox" class="hero__cta--secondary"><a href="{% url 'user_logout' %}">Logout</a></li>
-                            <li><a href="#"
-                                   class="p-r-none">Accounts</a></li>
+                            <li data-g-event="cta:hero" data-g-label="sign-in-to-inbox" class="hero__cta--secondary"><a href="{% url 'email_view' %}">Logout</a></li>
                         {% else %}
-<!--                            <li><a href="">Login</a></li>-->
-<!--                            <li><a href="" class="p-r-none">Sign Up</a></li>-->
+<!--
                                 <div class="hero ">
                                           <div class="content-section">
                                             <div class="hero__image">
