@@ -23,7 +23,6 @@
     <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
 
     <!-- Main CSS-->
-{#    <link href="css/main.css" rel="stylesheet" media="all">#}
     <style>
 
 /* ==========================================================================
@@ -699,14 +698,15 @@ input {
                                 <div class="input-group">
                                     <label class="label">password</label>
                                     <p class="input--style-4">{{ forms.password }}</p>
-{#                                    <input class="input--style-4" type="text" name="last_name">#}
                                 </div>
                             </div>
                         <div class="input-group">
 
-                        <div class="p-t-15">
-                            <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
-                            <a href="{% url 'reset_password' %}">forgot password</a>
+                        <div class="p-t-10">
+                            <button class="btn btn--radius-2 btn--blue" type="submit">Login</button>
+                            <br>
+                            <br>
+                            <a href="{% url 'reset_password' %}" style="text-decoration: none; color: deeppink">Forgot Password</a>
 
 
                         </div>
@@ -729,7 +729,6 @@ input {
     <script src="vendor/datepicker/daterangepicker.js"></script>
 
     <!-- Main JS-->
-{#    <script src="js/global.js"></script>#}
     <script>
         (function ($) {
     'use strict';
@@ -802,8 +801,5 @@ input {
 
 })(jQuery);
     </script>
-
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
-
+</body>
 </html>
-<!-- end document-->

@@ -10,7 +10,16 @@ urlpatterns = [
     path('reset-password', ResetPassword.as_view(), name='reset_password'),
     path('reset-password-confirm/<uidb64>/<token>/', reset_password_confirm, name='reset_password_confirm'),
     path('reset-password-confirm/', UserResetPasswordVerifyCodeView.as_view(), name='reset_password_confirm_phone'),
-    path('reset-password-confirm-complete/', ResetPasswordConfirmByPhone.as_view(), name='reset_password_confirm_phone_complete'),
+    path('reset-password-confirm-complete/', ResetPasswordConfirmByPhone.as_view(),
+         name='reset_password_confirm_phone_complete'),
     path('logout/', UserLogoutView.as_view(), name='user_logout'),
+    path('add-contact/<int:user_id>/', UserContactView.as_view(), name='add_contact'),
+    path('add-contact/', UserContactView.as_view(), name='add_contact'),
+    path('all-users/', ShowAllContact.as_view(), name="all_contacts"),
+    path('detail-contact/<int:contact_id>/', DetailContactView.as_view(), name="detail_contact"),
+    path('edit/<int:contact_id>', Update.as_view(), name="contact_update"),
+    path('delete/<int:contact_id>/', ContactDelete.as_view(), name="contact_delete"),
+    path('export-contact/', export_contact_csv, name="export_contact"),
+
 
 ]

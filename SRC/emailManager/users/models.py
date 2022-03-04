@@ -28,10 +28,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Relation(models.Model):
-    from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
-    to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
+class Contact(models.Model):
+    owner_contact = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, null=True,
+                             blank=True)
+    name = models.CharField(max_length=80)
+    email = models.EmailField(null=True, blank=True, unique=True)
     time = models.DateTimeField(auto_now_add=True)
+    birthdate = models.DateField(null=True, blank=True)
+    USERNAME_FIELD = 'name'
+
+    def __str__(self):
+        return f'name: {self.name}, phone: {self.phone}, email: {self.email}'
 
 
 class OtpCode(models.Model):

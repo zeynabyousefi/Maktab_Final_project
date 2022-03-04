@@ -1,93 +1,274 @@
-{# HTML5 declaration #}
 <!DOCTYPE html>
 <html>
-    {# Make modifiable head elements #}
-    <head>
-        <title>{% block title %}Home {% endblock title %} | CRM Easy</title>
-        {% block head_favicon %}
-            <link rel="icon" type="image/png"
-                  href="{{ STATIC_URL }}images/favicon.ico">
-        {% endblock head_favicon %}
-        {% block head_meta %}
-            {% block head_meta_charset %}
-                <meta http-equiv="Content-Type"
-                      content="text/html; charset=utf-8" />
-            {% endblock head_meta_charset %}
-            {% block head_meta_contentlanguage %}
-                <meta http-equiv="Content-Language" value="en-US" />
-            {% endblock head_meta_contentlanguage %}
-            {% block head_meta_viewport %}
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1.0">
-            {% endblock head_meta_viewport %}
-        {% endblock head_meta %}
-        {% block head_css %}
-            {% block head_css_site %}
-                <link href="{{ STATIC_URL }}css/bootstrap.min.css"
-                      rel="stylesheet" media="screen">
-                <link href="{{ STATIC_URL }}css/app.css"
-                      rel="stylesheet" media="screen">
-
-                <link rel="stylesheet" href="https://www.google.com/inbox/assets/static/css/main-f6170d064603edb9c17dd614c0fe7137.min.css" nonce="liFYiq-mg5Vz7h7wOrmBYQ">
-
-
-            {% endblock head_css_site %}
-            {% block head_css_section %}{% endblock head_css_section %}
-            {% block head_css_page %}{% endblock head_css_page %}
-        {% endblock head_css %}
-    </head>
+<head>
+    <title>{{user.username}}| {% block title %}Email{% endblock title %} </title>
+    {% block head_favicon %}
+    <link rel="icon" type="image/png"
+          href="{{ STATIC_URL }}images/favicon.ico">
+    {% endblock head_favicon %}
+    {% block head_meta %}
+    {% block head_meta_charset %}
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8"/>
+    {% endblock head_meta_charset %}
+    {% block head_meta_contentlanguage %}
+    <meta http-equiv="Content-Language" value="en-US"/>
+    {% endblock head_meta_contentlanguage %}
+    {% block head_meta_viewport %}
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    {% endblock head_meta_viewport %}
+    {% endblock head_meta %}
+    {% block head_css %}
+    {% block head_css_site %}
+    <link href="../../static/css/bootstrap.min.css"
+          rel="stylesheet" media="screen">
+    <link href="../../static/css/email_inbox.css"
+          rel="stylesheet" media="screen">
+    <link rel="stylesheet"
+          href="https://www.google.com/inbox/assets/static/css/main-f6170d064603edb9c17dd614c0fe7137.min.css"
+          nonce="liFYiq-mg5Vz7h7wOrmBYQ">
+    {% endblock head_css_site %}
+    {% block head_css_section %}{% endblock head_css_section %}
+    {% block head_css_page %}{% endblock head_css_page %}
+    {% endblock head_css %}
+    {% block head_javasciprt_page %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {% endblock head_javasciprt_page %}
+</head>
 <body>
-    {# Navigation Menu #}
-    <header>
-        <div class="navbar navbar-default navbar-static-top
+{% include 'layout/messages.html' %}
+<header>
+    {% if user.is_authenticated %}
+    <div class="navbar navbar-default navbar-static-top
         {% block nav-style %}{% endblock %}">
-            <div class="container p-none">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle"
-                            data-toggle="collapse"
-                            data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">Email Manager</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-<!--                        {% if user.is_authenticated %}-->
-<!--                            <li><a href="{% url 'user_logout' %}">Logout</a></li>-->
-<!--                            <li><a href="#"-->
-<!--                                   class="p-r-none">Accounts</a></li>-->
-<!--                        {% else %}-->
-<!--                            <li><a href="">Login</a></li>-->
-<!--                            <li><a href="" class="p-r-none">Sign Up</a></li>-->
-<!--                        {% endif %}-->
-                    </ul>
-                </div>
+        <div class="container p-none">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle"
+                        data-toggle="collapse"
+                        data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Email Manager</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+
+                    {% block mail_box %}
+                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+                          rel="stylesheet">
+                    <div class="container bootstrap snippets bootdeys">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="box">
+                                    <!--mail inbox start-->
+                                    <div class="mail-box">
+                                        <aside class="sm-side">
+                                            <div class="user-head">
+                                                <a href="javascript:;" class="inbox-avatar">
+                                                    <img src="../../static/images/rose.JPG" alt=""
+                                                         class="img-responsive">
+                                                </a>
+                                                <div class="user-name">
+                                                    {% if request.user.id == user.id %}
+                                                    <h5><a href="{% url 'email_view' %}">{{user.first_name}}
+                                                        {{user.last_name}}</a></h5>
+                                                    <span><a href="{% url 'email_view' %}">{{user.username}}</a></span>
+                                                    <br>
+                                                    <span><a href="{% url 'user_logout' %}"
+                                                             style="color: darkorange"><strong>Logout</strong></a></span>
+
+                                                </div>
+                                                {%endif%}
+                                                <a href="javascript:;" class="mail-dropdown pull-right">
+                                                    <i class="fa fa-chevron-down"></i>
+                                                </a>
+                                            </div>
+                                            <div class="inbox-body">
+                                                <a class="btn btn-compose" href="{% url 'new_email' %}"
+                                                   data-original-title=""
+                                                   title="">
+                                                    Compose
+                                                </a>
+                                            </div>
+                                            <ul class="inbox-nav inbox-divider">
+                                                {% if request.get_full_path == "/emails/email-view/" %}
+                                                <li class="active">
+                                                    <a href="{% url 'email_view' %}"><i class="fa fa-inbox"></i> Inbox
+                                                        <span
+                                                                class="label label-danger pull-right">2</span></a>
+                                                </li>
+                                                {% else %}
+                                                <li>
+                                                    <a href="{% url 'email_view' %}"><i class="fa fa-inbox"></i> Inbox
+                                                        <span
+                                                                class="label label-danger pull-right">2</span></a>
+                                                </li>
+                                                {% endif %}
+                                                {% if request.get_full_path == "/emails/%23sentbox/" %}
+                                                <li class="active">
+                                                    <a href="{% url 'email_sentbox' %}"><i class="fa fa-envelope-o"></i>
+                                                        Sent Mail</a>
+                                                </li>
+                                                {% else %}
+                                                <li>
+                                                    <a href="{% url 'email_sentbox' %}"><i class="fa fa-envelope-o"></i>
+                                                        Sent Mail</a>
+                                                </li>
+                                                {% endif %}
+                                                <li>
+                                                    <a href="#"><i class="fa fa-bookmark-o"></i> Important</a>
+                                                </li>
+                                                {% if request.get_full_path == "/emails/%23drafts/" %}
+                                                <li class="active">
+                                                    <a href="{% url 'email_drafts' %}"><i
+                                                            class=" fa fa-external-link"></i> Drafts <span
+                                                            class="label label-info pull-right">30</span></a>
+                                                </li>
+                                                {% else %}
+                                                <li>
+                                                    <a href="{% url 'email_drafts' %}"><i
+                                                            class=" fa fa-external-link"></i> Drafts <span
+                                                            class="label label-info pull-right">30</span></a>
+                                                </li>
+                                                {% endif %}
+                                                <li>
+                                                    <a href="#"><i class=" fa fa-trash-o"></i> Trash</a>
+                                                </li>
+                                            </ul>
+                                            <ul class="nav nav-pills nav-stacked labels-info inbox-divider">
+                                                <li><h4>Labels &nbsp;&nbsp;<a class="fa fa-plus"
+                                                                              href="{% url 'add_label' %}"> Create
+                                                    Label</a></h4></li>
+                                                {% for folder in objects %}
+                                                {% if request.user == folder.creator %}
+                                                <li><a href="#">{{ folder.name }}</a></li>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="inbox-body text-center">
+                                                <div class="btn-group">
+                                                    <a href="{% url 'export_contact'%}" class="btn mini btn-primary"
+                                                       data-original-title=""
+                                                       title="">
+                                                        <i class="fa fa-plus" style="background-color: red"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <a href="{% url 'add_contact'%}" class="btn mini btn-primary"
+                                                       data-original-title=""
+                                                       title="">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <a href="{% url 'all_contacts'%}" class="btn mini btn-success"
+                                                       data-original-title=""
+                                                       title="">
+                                                        <i class="fa fa-phone"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <a href="javascript:;" class="btn mini btn-info"
+                                                       data-original-title="" title="">
+                                                        <i class="fa fa-cog"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </aside>
+                                        {% block mail_box_body %}
+
+                                        {% endblock mail_box_body %}
+                                    </div>
+                                    <!--mail inbox end-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endblock mail_box %}
+                    {% else %}
+                    <div class="hero ">
+                        <div class="content-section">
+                            <div class="hero__image">
+                                <video src="https://www.google.com/inbox/assets/static/images/animation.mp4"
+                                       type="video/mp4" autoplay muted>
+                                    <img src="https://www.google.com/inbox/assets/static/images/animation.png">
+                                </video>
+                            </div>
+                        </div>
+                        <div class="hero__content">
+                            <h1 class="hero__title">
+                                <span class="hero__title-part">Inbox is signing off.</span>
+                                <span class="hero__title-part">Find your favorite<br>features in the new Gmail.</span>
+                            </h1>
+                            <div class="hero__body">
+                                <p>We are saying goodbye to Inbox at the end of March 2019. While we were here, we found
+                                    a new way to email with ideas like snooze, nudges, Smart Reply and more.</p>
+                                <p>That’s why we’ve brought your favorite features to Gmail to help you get more done.
+                                    All your conversations are already waiting for you. See you there.</p>
+                            </div>
+                            <div class="hero__cta">
+                                <a data-g-event="cta:hero" data-g-label="try-the-new-gmail"
+                                   class="hero__cta--web hero__cta--primary" href="{% url 'user_register' %}">
+                                    Try the new Email
+                                </a>
+                                <a data-g-event="cta:hero" data-g-label="try-the-new-gmail"
+                                   class="hero__cta--android hero__cta--primary" href="{% url 'user_register' %}">
+                                    Try the new Email
+                                </a>
+                                <a data-g-event="cta:hero" data-g-label="try-the-new-gmail"
+                                   class="hero__cta--ios hero__cta--primary" href="{% url 'user_register' %}">
+                                    Try the new Email
+                                </a>
+                                <div>
+                                    <a data-g-event="cta:hero" data-g-label="sign-in-to-inbox"
+                                       class="hero__cta--secondary" href="{% url 'user_login' %}">
+                                        Sign in to Inbox
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-    </header>
-    {# The Document Body #}
-    <div id="site-wrapper">
-        {% block content %}
-            if you see this, something is wrong!
-        {% endblock content %}
     </div>
-    {# The Footer #}
-    <div class="footer">
-        <div class="container">
-            <p>Copyright CRM Easy</p>
-        </div>
+</header>
+{# The Footer #}
+<div class="footer">
+    <div class="container">
+        <p>Zeynab Yousefi @2022</p>
     </div>
+</div>
 </body>
 {# Set of blocks that can be used to display JavaScript files #}
-    {% block footer_javascript %}
-        {% block footer_javascript_site %}
-            <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-            <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-            <script src="{{ STATIC_URL }}js/app.js"></script>
-        {% endblock footer_javascript_site %}
-        {% block footer_javascript_section %}{% endblock footer_javascript_section %}
-        {% block footer_javascript_page %}{% endblock footer_javascript_page %}
-    {% endblock footer_javascript %}
+{% block footer_javascript %}
+{% block footer_javascript_site %}
+<script>
+                $(document).ready(function() {
+                    // messages timeout for 10 sec
+                    setTimeout(function() {
+                        $('.message').fadeOut('slow');
+                    }, 800); // <-- time in milliseconds, 1000 =  1 sec
+                    // delete message
+                    $('.del-msg').live('click',function(){
+                        $('.del-msg').parent().attr('style', 'display:none;');
+                    })
+                });
+
+</script>
+<script src="../../static/js/jquery.min.js"></script>
+<script src="../../static/js/bootstrap.min.js"></script>
+<script src="../../static/js/app.js"></script>
+<script type="text/javascript">
+</script>
+{% endblock footer_javascript_site %}
+{% block footer_javascript_section %}{% endblock footer_javascript_section %}
+{% block footer_javascript_page %}{% endblock footer_javascript_page %}
+{% endblock footer_javascript %}
 </html>
