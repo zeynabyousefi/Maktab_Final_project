@@ -1,12 +1,11 @@
+import csv
 import random
-
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
 from django.views import View
 from .forms import *
 from django.contrib import messages
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.sites.shortcuts import get_current_site
@@ -23,13 +22,19 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth import authenticate, login, logout
+from emails.models import *
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
 
 class Index(View):
-    def get(self, request):
-        return render(request, 'home.html')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('email_view')
+        else:
+            return render(request, 'layout/_base.html')
 
 
 class UserRegister(View):
@@ -62,7 +67,7 @@ class UserRegister(View):
                 )
                 email.send()
                 messages.success(request, 'Please Confirm your email to complete registration.')
-                return HttpResponse('Link sent to your email!')
+                messages.success(request, 'we sent you email', 'success')
             elif form.cleaned_data['phone_number']:
                 random_code = random.randint(1000, 9999)
                 send_otp_code(form.cleaned_data['phone_number'], random_code)
@@ -103,11 +108,16 @@ def activate(request, uidb64, token, *args, **kwargs):
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
-        user.username += '@zyo.com'
+        user.username += '@email.com'
         user.save()
+        # folders = ['inbox', 'sentbox', 'trash', 'draft']
+        # for folder in folders:
+        #     email_place_holder = EmailPlaceHolders()
+        #     email_place_holder.place_holder = folder
+        #     email_place_holder.save()
         login(request, user)
         # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        return redirect('email_view')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -145,14 +155,18 @@ class UserRegisterVerifyCodeView(View):
                 print('*********************************************************')
                 user = CustomUser.objects.get(phone_number=user_session['phone_number'])
                 user.is_active = True
-                user.username += '@zyo.com'
+                user.username += '@email.com'
                 user.save()
-
+                # folders = ['inbox', 'sentbox', 'trash', 'draft']
+                # for folder in folders:
+                #     email_place_holder = EmailPlaceHolders()
+                #     email_place_holder.place_holder = folder
+                #     email_place_holder.save()
                 # CustomUser.save()
 
                 code_instance.delete()
                 messages.success(request, 'you registered.', 'success')
-                return HttpResponse("you saved!")
+                return redirect("email_view")
             else:
                 messages.error(request, 'this code is wrong', 'danger')
                 return redirect('verify_code')
@@ -162,10 +176,10 @@ class UserLogin(View):
     form_class = UserLoginForm
     template_name = 'users/login.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('home')
-        return super().dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         return redirect('home')
+    #     return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
         form = self.form_class
@@ -267,7 +281,7 @@ def reset_password_confirm(request, uidb64, token, *args, **kwargs):
                 user_complete_new_password = form.cleaned_data['password1']
                 user.set_password(user_complete_new_password)
                 user.save()
-                return HttpResponse('Your password is confirmed successfully!')
+                return redirect('user_login')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -309,7 +323,7 @@ class ResetPasswordConfirmByPhone(View):
             user.set_password(user_complete_new_password)
             user.save()
             messages.success(request, 'your password confirmed successfully.', 'success')
-            return HttpResponse('Your password is confirmed successfully!')
+            return redirect('user_login')
 
 
 class UserLogoutView(LoginRequiredMixin, View):
@@ -318,3 +332,94 @@ class UserLogoutView(LoginRequiredMixin, View):
         logout(request)
         messages.success(request, 'you logout successfully', 'success')
         return redirect('home')
+
+
+class UserContactView(LoginRequiredMixin, View):
+    form_class = AddContact
+    template_name = 'users/add_contact.html'
+
+    def get(self, request):
+        form = self.form_class
+        return render(request, self.template_name, {'forms': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            new_contact = form.save(commit=False)
+            new_contact.owner_contact = request.user
+            new_contact.save()
+            messages.success(request, f'You Add {cd["name"]} in your contact', 'success')
+            return redirect('email_view')
+
+
+class ShowAllContact(LoginRequiredMixin, View):
+    template = 'users/all_contact.html'
+
+    def get(self, request):
+        all_contact = Contact.objects.filter(owner_contact=request.user.id)
+        return render(request, self.template, {"all_contact": all_contact})
+
+
+class DetailContactView(LoginRequiredMixin, View):
+    template = 'users/detail_contact.html'
+
+    def setup(self, request, *args, **kwargs):
+        self.email_instance = get_object_or_404(Contact, pk=kwargs['contact_id'])
+        return super().setup(request, *args, **kwargs)
+
+    def get(self, request, contact_id):
+        contact = Contact.objects.get(pk=contact_id)
+        return render(request, self.template, {'contact': contact})
+
+
+class Update(LoginRequiredMixin, View):
+    form_class = AddContact
+    template = 'users/update_contact.html'
+
+    def setup(self, request, *args, **kwargs):
+        self.contact_instance = Contact.objects.get(pk=kwargs["contact_id"])
+        return super().setup(request, *args, **kwargs)
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     conatct= self.contact_instance
+    #     if not conatct.user.id == request.user.id:
+    #         messages.error(request, 'you can not edit', 'danger')
+    #         return redirect('home')
+    #     return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        conatct = self.contact_instance
+        form = self.form_class(instance=conatct)
+        return render(request, self.template, {'forms': form})
+
+    def post(self, request, *args, **kwargs):
+        conatct = self.contact_instance
+        form = self.form_class(request.POST, instance=conatct)
+        if form.is_valid():
+            update_conatct = form.save(commit=False)
+            update_conatct.owner_contact = request.user
+            update_conatct.save()
+            messages.success(request, "updated post", 'success')
+            return redirect('detail_contact', update_conatct.id)
+
+
+class ContactDelete(LoginRequiredMixin, View):
+    def get(self, request, contact_id):
+        contact = Contact.objects.get(pk=contact_id)
+        contact.delete()
+        messages.success(request, "delete was successfully", 'success')
+        return redirect('email_view')
+
+
+def export_contact_csv(request):
+    contacts = Contact.objects.filter(owner_contact=request.user)
+    # return HttpResponse(contacts)
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=contacts.csv'
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'owner_contact', 'phone', 'Name', 'Email', 'Birthdate'])
+    studs = contacts.values_list('id', 'owner_contact', 'phone', 'name', 'email', 'birthdate')
+    for std in studs:
+        writer.writerow(std)
+    return response
