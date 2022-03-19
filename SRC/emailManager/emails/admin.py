@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(Email)
 admin.site.register(EmailPlaceHolders)
 admin.site.register(UserEmailMapped)
+admin.site.register(EmailReceiver)

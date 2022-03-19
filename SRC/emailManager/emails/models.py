@@ -19,17 +19,28 @@ class Email(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
     attachment = models.FileField(upload_to=user_directory_path, null=True, blank=True,
                                   validators=[validate_file_size])
-    to = models.EmailField(blank=True, null=True)
-    cc = models.EmailField(blank=True, null=True)
-    bcc = models.EmailField(blank=True, null=True)
     reply = models.ForeignKey('self', null=True, blank=True, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f'author: {self.author.username} subject: {self.subject}'
 
 
+class EmailReceiver(models.Model):
+    email = models.ForeignKey(Email, on_delete=models.CASCADE)
+    to = models.ManyToManyField(CustomUser, blank=True, related_name='to')
+    cc = models.ManyToManyField(CustomUser, blank=True, related_name='cc')
+    bcc = models.ManyToManyField(CustomUser, blank=True, related_name='bcc')
+
+    def __str__(self):
+        to_string = ", ".join(str(to) for to in self.to.all())
+        cc_string = ", ".join(str(cc) for cc in self.cc.all())
+        bcc_string = ", ".join(str(bcc) for bcc in self.bcc.all())
+
+        return f'to: {to_string}; cc: {cc_string}; bcc:{bcc_string}'
+
+
 class EmailPlaceHolders(models.Model):
-    place_holder = models.CharField(max_length=255)
+    place_holder = models.CharField(max_length=255,unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
@@ -45,3 +56,4 @@ class UserEmailMapped(models.Model):
 
     def __str__(self):
         return f'{self.user}'
+

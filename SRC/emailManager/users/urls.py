@@ -20,6 +20,8 @@ urlpatterns = [
     path('edit/<int:contact_id>', Update.as_view(), name="contact_update"),
     path('delete/<int:contact_id>/', ContactDelete.as_view(), name="contact_delete"),
     path('export-contact/', export_contact_csv, name="export_contact"),
+    path('search-contact/', SearchContacts.as_view(), name="search_contact"),
+    path('add-signature/', AddSignature.as_view(), name="add_signature"),
 
 
 ]

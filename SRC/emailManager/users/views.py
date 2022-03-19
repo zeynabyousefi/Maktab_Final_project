@@ -24,7 +24,7 @@ from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth import authenticate, login, logout
 from emails.models import *
 from django.contrib.auth import authenticate
-
+from emails.forms import SearchBox
 
 # Create your views here.
 
@@ -79,7 +79,7 @@ class UserRegister(View):
                     'first_name': form.cleaned_data['first_name'],
                     'last_name': form.cleaned_data['last_name'],
                     'country': form.cleaned_data['country'],
-                    'birthdate': form.cleaned_data['birthdate'].isoformat(),
+                    'birthdate': form.cleaned_data['birthdate'],
                     'password': form.cleaned_data['password2'],
                     'gender': form.cleaned_data['gender'],
                 }
@@ -166,6 +166,7 @@ class UserRegisterVerifyCodeView(View):
 
                 code_instance.delete()
                 messages.success(request, 'you registered.', 'success')
+                login(request, user)
                 return redirect("email_view")
             else:
                 messages.error(request, 'this code is wrong', 'danger')
@@ -351,6 +352,7 @@ class UserContactView(LoginRequiredMixin, View):
             new_contact.save()
             messages.success(request, f'You Add {cd["name"]} in your contact', 'success')
             return redirect('email_view')
+        return HttpResponse(form.errors)
 
 
 class ShowAllContact(LoginRequiredMixin, View):
@@ -409,7 +411,7 @@ class ContactDelete(LoginRequiredMixin, View):
         contact = Contact.objects.get(pk=contact_id)
         contact.delete()
         messages.success(request, "delete was successfully", 'success')
-        return redirect('email_view')
+        return redirect('all_contacts')
 
 
 def export_contact_csv(request):
@@ -423,3 +425,43 @@ def export_contact_csv(request):
     for std in studs:
         writer.writerow(std)
     return response
+
+
+class SearchContacts(LoginRequiredMixin, View):
+
+    def get(self, request):
+        user_contacts = Contact.objects.filter(owner_contact=request.user)
+        form = SearchBox()
+        final_query = Q()
+        if 'search' in request.GET:
+            form = SearchBox(request.GET)
+            if form.is_valid():
+                cd = form.cleaned_data['search']
+                for item in user_contacts:
+                    final_query.add(
+                        Q(
+                            name__icontains=cd,
+
+                        ) |
+                        Q(email__icontains=cd) |
+                        Q(phone__icontains=cd),
+                        Q.OR
+                    )
+                search = Contact.objects.filter(final_query, owner_contact=request.user)
+        return render(request, 'users/search_contact.html', {'search': search})
+
+
+class AddSignature(LoginRequiredMixin, View):
+    template_name = 'users/add_signature.html'
+    form = AddSignatureForm
+
+    def get(self, request):
+        return render(request, self.template_name, {'forms': self.form})
+
+    def post(self, request):
+        form = self.form(request.POST)
+        if form.is_valid():
+            add_signature = form.save(commit=False)
+            add_signature.owner = request.user
+            add_signature.save()
+            return redirect('setting')
