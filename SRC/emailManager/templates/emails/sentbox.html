@@ -22,13 +22,6 @@
 <aside class="lg-side">
                         <div class="inbox-head">
                             <h3>Sentbox</h3>
-                            <form class="pull-right position" action="#">
-                                <div class="input-append">
-                                    <input type="text" placeholder="Search Mail" class="sr-input">
-                                    <button type="button" class="btn sr-btn" data-original-title="" title=""><i
-                                            class="fa fa-search"></i></button>
-                                </div>
-                            </form>
                         </div>
                         <div class="inbox-body">
                             <div class="mail-option">
@@ -98,7 +91,11 @@
                                         <input type="checkbox" class="mail-checkbox">
                                     </td>
                                     <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
-                                    <td class="view-message  dont-show"><a href="{%url 'detail_email' object.email.id%}">To: {{ object.email.to }}</a></td>
+                                    <td class="view-message  dont-show"><a href="{%url 'detail_email' object.email.id%}">To: </a></td>
+{#                                    {% if receiver.objects.get(email=object) %}#}
+                                    <td class="view-message  dont-show"><a href="{%url 'detail_email' object.email.id%}">To: Many people</a></td>
+{#                                    {%endif%}#}
+
                                     <td class="view-message "><a href="{%url 'detail_email' object.email.id%}">{{ object.email.subject }}</a></td>
                                     <td class="view-message  inbox-small-cells"><i class="fa fa-paperclip"></i></td>
                                     <td class="view-message  text-right"><a href="{%url 'detail_email' object.email.id%}">{{ object.email.created_date }}</a></td>

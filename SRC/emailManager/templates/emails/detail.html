@@ -1,284 +1,281 @@
 {% extends 'layout/_base.html' %}
 {% load static %}
 {% block head_css_page %}
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="{% static 'css/email_inbox.css' %}">
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/email_inbox.css' %}">
 {% endblock head_css_page %}
 {% block head_javasciprt_page %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock head_javasciprt_page %}
 {% block title %}{{ bject.subject }}{% endblock title %}
 {% block nav-style %}mkt-nav{% endblock nav-style %}
 
 {% block content %}
-{% block mail_box_body %}
-<aside class="lg-side">
-    <div class="inbox-head">
-        <h3>Inbox</h3>
-        <form class="pull-right position" action="#">
-            <div class="input-append">
-                <input type="text" placeholder="Search Mail" class="sr-input">
-                <button type="button" class="btn sr-btn" data-original-title="" title=""><i
-                        class="fa fa-search"></i></button>
+    {% block mail_box_body %}
+        <aside class="lg-side">
+            <div class="inbox-head">
+                <h3>Detail</h3>
             </div>
-        </form>
-    </div>
-    <div class="inbox-body">
-        <div class="mail-option">
-            <div class="chk-all">
-                <input type="checkbox" class="mail-checkbox mail-group-checkbox">
-                <div class="btn-group">
-                    <a class="btn mini all" href="#" data-toggle="dropdown" data-original-title=""
-                       title="">
-                        All
-                        <i class="fa fa-angle-down "></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"> None</a></li>
-                        <li><a href="#"> Read</a></li>
-                        <li><a href="#"> Unread</a></li>
-                    </ul>
+            <div class="inbox-body">
+                <div class="mail-option">
+
+                    <div class="chk-all">
+                        <input type="checkbox" class="mail-checkbox mail-group-checkbox">
+                        <div class="btn-group">
+                            <a class="btn mini all" href="#" data-toggle="dropdown" data-original-title=""
+                               title="">
+                                All
+                                <i class="fa fa-angle-down "></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"> None</a></li>
+                                <li><a href="#"> Read</a></li>
+                                <li><a href="#"> Unread</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn mini tooltips" href="#" data-toggle="dropdown" data-placement="top"
+                           data-original-title="Refresh">
+                            <i class=" fa fa-refresh"></i>
+                        </a>
+                    </div>
+                    <div class="btn-group hidden-phone">
+                        <a class="btn mini blue" href="#" data-toggle="dropdown" data-original-title=""
+                           title="">
+                            Move To
+                            <i class="fa fa-angle-down "></i>
+                        </a>
+                       <ul class="dropdown-menu">
+                            <li><a href="#"><i class="fa fa-pencil"></i> Mark as Read</a></li>
+                            <li><a href="{% url 'add_email_archive' object.id%}"><i class="fa fa-archive"></i> Archive</a></li>
+                            <li class="divider"></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'delete_email' object.id%}"><i class="fa fa-trash-o"></i> Delete</a></li>
+                            {% for label in labels %}
+                                <li><a href="{% url 'email_to_label' object.id label.id%}"><i class="fa fa-pencil"></i>{{label.place_holder}}</a></li>
+                                {% endfor %}
+
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="btn-group">
-                <a class="btn mini tooltips" href="#" data-toggle="dropdown" data-placement="top"
-                   data-original-title="Refresh">
-                    <i class=" fa fa-refresh"></i>
-                </a>
-            </div>
-            <div class="btn-group hidden-phone">
-                <a class="btn mini blue" href="#" data-toggle="dropdown" data-original-title=""
-                   title="">
-                    More
-                    <i class="fa fa-angle-down "></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><i class="fa fa-pencil"></i> Mark as Read</a></li>
-                    <li><a href="#"><i class="fa fa-ban"></i> Spam</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>
-                </ul>
-            </div>
-            <div class="btn-group">
-                <a class="btn mini blue" href="#" data-toggle="dropdown" data-original-title=""
-                   title="">
-                    Move to
-                    <i class="fa fa-angle-down "></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><i class="fa fa-pencil"></i> Mark as Read</a></li>
-                    <li><a href="#"><i class="fa fa-ban"></i> Spam</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>
-                </ul>
-            </div>
-            <ul class="unstyled inbox-pagination">
-                <li><span>1-50 of 234</span></li>
-                <li>
-                    <a href="#" class="np-btn"><i class="fa fa-angle-left  pagination-left"></i></a>
-                </li>
-                <li>
-                    <a href="#" class="np-btn"><i
-                            class="fa fa-angle-right pagination-right"></i></a>
-                </li>
-            </ul>
-        </div>
-        {% if object.reply %}
-        <p class="view-message  dont-show"><span style="color: blue">From:</span> {{ object.reply.author }}</p>
-        <p class="view-message "><span style="color: blue">Subject:</span> {{ object.reply.subject }}</p>
-        <br>
-        <br>
-        <div style="border: #1c7430 dashed 2px">
-            <p class="view-message  text-left"><span style="color: blue">Date Time:</span> {{ object.reply.created_date
-                }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Message:</span> {{ object.reply.body }}</p>
-            {% if not object.bcc %}
-            <p class="view-message  text-left"><span style="color: blue">To:</span> {{ object.reply.to }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Cc:</span> {{ object.reply.cc }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Bcc:</span> {{ object.reply.bcc }}</p>
-            {% else %}
-            <p class="view-message  text-left"><span style="color: blue">To:</span></p>
-            <p class="view-message  text-left"><span style="color: blue">Cc:</span></p>
-            <p class="view-message  text-left"><span style="color: blue">Bcc:</span> {{ object.reply.bcc }}</p>
-            {% endif %}
-        </div>
-        {% endif %}
-        <br>
-        <br>
-        <p class="view-message  dont-show"><span style="color: blue">From:</span> {{ object.author }}</p>
-        <p class="view-message "><span style="color: blue">Subject:</span> {{ object.subject }}</p>
-        <br>
-        <br>
-        <div style="border: #1c7430 dashed 2px">
-            <p class="view-message  text-left"><span style="color: blue">Date Time:</span> {{ object.created_date }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Message:</span> {{ object.body }}</p>
-            {% if not object.bcc %}
-            <p class="view-message  text-left"><span style="color: blue">To:</span> {{ object.to }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Cc:</span> {{ object.cc }}</p>
-            <p class="view-message  text-left"><span style="color: blue">Bcc:</span> {{ object.bcc }}</p>
-            {% else %}
-            <p class="view-message  text-left"><span style="color: blue">To:</span></p>
-            <p class="view-message  text-left"><span style="color: blue">Cc:</span></p>
-            <p class="view-message  text-left"><span style="color: blue">Bcc:</span> {{ object.bcc }}</p>
-            {% endif %}
-        </div>
-        <br>
-        {% if object.attachment.url%}
-        <p class="view-message  text-left"><span style="color: blue">attachment: </span><a
-                href="{{ object.attachment.url }}" class="fa fa-paperclip" style="color: black">File</a>
-            {%endif%}
-            <br>
-            <br>
-            <button id="toggle_01">Reply</button>
-            <button id="toggle_02">Forward</button>
-        <div id="reply" style="display: none">
-            <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data"
-                  action="/emails/new-email/">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">To</label>
-                    <div class="col-lg-10">
+                {% if object.reply %}
+                    <p class="view-message  dont-show"><span style="color: blue">From:</span> {{ object.reply.author }}
+                    </p>
+                    <p class="view-message "><span style="color: blue">Subject:</span> {{ object.reply.subject }}</p>
+                    <br>
+                    <br>
+                    <div style="border: #1c7430 dashed 2px">
+                        <p class="view-message  text-left"><span
+                                style="color: blue">Date Time:</span> {{ object.reply.created_date }}</p>
+                        <p class="view-message  text-left"><span
+                                style="color: blue">Message:</span> {{ object.reply.body }}</p>
                         {% if not object.bcc %}
-                        <input type="text" class="form-control" id="inputEmail199">
-                               placeholder="" name="to" value={{ object.to }}>
+                            <p class="view-message  text-left"><span
+                                    style="color: blue">To:</span> {{ object.reply.to }}</p>
+                            <p class="view-message  text-left"><span
+                                    style="color: blue">Cc:</span> {{ object.reply.cc }}</p>
+                            <p class="view-message  text-left"><span
+                                    style="color: blue">Bcc:</span> {{ object.reply.bcc }}</p>
                         {% else %}
-                        <input type="text" class="form-control", id="inputEmai45",placeholder="" name="to">
-
+                            <p class="view-message  text-left"><span style="color: blue">To:</span></p>
+                            <p class="view-message  text-left"><span style="color: blue">Cc:</span></p>
+                            <p class="view-message  text-left"><span
+                                    style="color: blue">Bcc:</span> {{ object.reply.bcc }}</p>
                         {% endif %}
                     </div>
+                {% endif %}
+                <br>
+                <br>
+                <p class="view-message  dont-show"><span style="color: blue">From:</span> {{ object.author }}</p>
+                <p class="view-message "><span style="color: blue">Subject:</span> {{ object.subject }}</p>
+                <br>
+                <br>
+                <div style="border: #1c7430 dashed 2px">
+                    <p class="view-message  text-left"><span
+                            style="color: blue">Date Time:</span> {{ object.created_date }}</p>
+                    <p class="view-message  text-left"><span style="color: blue">Message:</span> {{ object.body }}</p>
+                    {% if not has_bcc %}
+                        <p class="view-message  text-left" style="display: inline;"><span style="color: blue">To:</span>
+                            {% for to in to.all %}
+                                {{ to.username }},</p>
+                            {% endfor %}
+                        <p class="view-message  text-left"><span style="color: blue">Cc:</span>
+                            {% for cc in cc.all %}
+                                {{ cc.username }}</p>
+                            {% endfor %}
+                        <p class="view-message  text-left"><span style="color: blue">Bcc:</span>
+                            {% for bcc in bcc.all %}
+                                {{ bcc.username }}</p>
+                            {% endfor %}
+                    {% else %}
+                        <p class="view-message  text-left"><span style="color: blue">To:</span></p>
+                        <p class="view-message  text-left"><span style="color: blue">Cc:</span></p>
+                        <p class="view-message  text-left"><span style="color: blue">Bcc:</span>
+                            {% for bcc in bcc.all %}
+                                {{ bcc.username }}</p>
+                            {% endfor %}
+                    {% endif %}
                 </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Cc</label>
-                    <div class="col-lg-10">
-                        {% if  object.bcc %}
-                        <input type="text" class="form-control" id="cc" placeholder="" name="cc" value={{ object.cc }}>
-                        {% else %}
-                        <input type="text" class="form-control" id="cc" placeholder="" name="cc">
-                        {% endif %}
+                <br>
+                {% if object.attachment.url %}
+                    <p class="view-message  text-left"><span style="color: blue">attachment: </span>
+                    <a href="{{ object.attachment.url }}" class="fa fa-paperclip" style="color: black">File</a>
+                {% endif %}
+                <br>
+                <br>
+                <button id="toggle_01">Reply</button>
+                <button id="toggle_02">Forward</button>
+                <div id="reply" style="display: none">
+                    <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data"
+                          action="/emails/new-email/">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">To</label>
+                            <div class="col-lg-10">
+                                {% if not object.bcc %}
+                                    <input type="text" class="form-control" id="inputEmail1"
+                                           placeholder="" name="to" value={{ object.to }}>
+                                {% else %}
+                                    <input type="text" class="form-control" id="inputEmail1"
+                                           placeholder="" name="to">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Cc</label>
+                            <div class="col-lg-10">
+                                {% if not object.bcc %}
+                                    <input type="text" class="form-control" id="cc" placeholder="" name="cc"
+                                           value={{ object.cc }}>
+                                {% else %}
+                                    <input type="text" class="form-control" id="cc" placeholder="" name="cc">
+                                {% endif %}
 
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Bcc</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" id="bcc" placeholder="" name="bcc" value={{ object.bcc}}>
-
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Subject</label>
-                    <div class="col-lg-10">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Bcc</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" id="bcc" placeholder="" name="bcc"
+                                       value={{ object.bcc }}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Subject</label>
+                            <div class="col-lg-10">
                                                 <span style="display: none"><input type="text" class="form-control"
                                                                                    placeholder="" name="subject"
                                                                                    value={{ object.subject }}></span>
-                        <p type="text" class="form-control" id="inputPassword1"
-                           placeholder="">{{ object.subject }}</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Message</label>
-                    <div class="col-lg-10">
+                                <p type="text" class="form-control" id="inputPassword1"
+                                   placeholder="">{{ object.subject }}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Message</label>
+                            <div class="col-lg-10">
                                                 <textarea name="body" id="" class="form-control" cols="30"
                                                           rows="10"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-lg-offset-2 col-lg-10">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
                                             <span class="btn green fileinput-button" data-original-title=""
                                                   title="">
                                               <i class="fa fa-plus fa fa-white"></i>
                                               <span>Attachment</span>
                                               <input type="file" multiple="" name="file">
                                             </span>
-                        <button type="submit" class="btn btn-send"
-                                data-original-title="" title="">Send
-                        </button>
-                    </div>
+                                <button type="submit" class="btn btn-send"
+                                        data-original-title="" title="">Send
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-        <div id="forward" style="display: none">
-            <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data"
-                  action="/emails/new-email/">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">To</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" id="inputEmail1"
-                               placeholder="" name="to">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Cc</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" id="cc" placeholder="" name="cc">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Bcc</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" id="bcc" placeholder="" name="bcc">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Subject</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" #}
-                               placeholder="" name="subject" value={{ object.subject }}>
-
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-2 control-label">Message</label>
-                    <div class="col-lg-10">
+                <div id="forward" style="display: none">
+                    <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data"
+                          action="/emails/new-email/">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">To</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" id="inputEmail1"
+                                       placeholder="" name="to">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Cc</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" id="cc" placeholder="" name="cc">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Bcc</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" id="bcc" placeholder="" name="bcc">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Subject</label>
+                            <div class="col-lg-10">
+                                                    <span><input type="text" class="form-control"
+                                                                 placeholder="" name="subject"
+                                                                 value={{ object.subject }}></span>
+                                {#                                                <p type="text" class="form-control" id="input_subject"#}
+                                {#                                                   placeholder="" id="subject">{{ object.subject }}</p>#}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Message</label>
+                            <div class="col-lg-10">
                                                 <textarea name="body" id="" class="form-control" cols="30"
                                                           rows="10">{{ object.body }}</textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-lg-offset-2 col-lg-10">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
                                             <span class="btn green fileinput-button" data-original-title=""
                                                   title="">
                                               <i class="fa fa-plus fa fa-white"></i>
                                               <span>Attachment</span>
                                               <input type="file" multiple="" name="file" value={{ object.attachment }}>
                                             </span>
-                        <button type="submit" class="btn btn-send"
-                                data-original-title="" title="">Send
-                        </button>
-                    </div>
+                                <button type="submit" class="btn btn-send"
+                                        data-original-title="" title="">Send
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
-</aside>
-{% endblock mail_box_body %}
+            </div>
+        </aside>
+    {% endblock mail_box_body %}
 {% endblock content %}
 {% block footer_javascript_page %}
-<script>
+    <script>
         const targetDiv = document.getElementById("reply");
         const btn = document.getElementById("toggle_01");
         btn.onclick = function () {
-          if (targetDiv.style.display === "none") {
-            targetDiv.style.display="block";
-          }else{
-              targetDiv.style.display="none";
-          }
+            if (targetDiv.style.display === "none") {
+                targetDiv.style.display = "block";
+            } else {
+                targetDiv.style.display = "none";
+            }
         };
         const targetDiv1 = document.getElementById("forward");
         const btn1 = document.getElementById("toggle_02");
         btn1.onclick = function () {
-          if (targetDiv1.style.display === "none") {
-            targetDiv1.style.display="block";
-          }else{
-              targetDiv1.style.display="none";
-          }
+            if (targetDiv1.style.display === "none") {
+                targetDiv1.style.display = "block";
+            } else {
+                targetDiv1.style.display = "none";
+            }
         };
         const subject = document.getElementById("subject").innerHTML;
         const input_subject = document.getElementById("input_subject");
         input_subject.value = subject
-
-</script>
+    </script>
 {% endblock footer_javascript_page %}

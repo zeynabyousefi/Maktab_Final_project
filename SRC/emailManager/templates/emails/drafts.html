@@ -18,13 +18,6 @@
 <aside class="lg-side">
     <div class="inbox-head">
         <h3>Drafts</h3>
-        <form class="pull-right position" action="#">
-            <div class="input-append">
-                <input type="text" placeholder="Search Mail" class="sr-input">
-                <button type="button" class="btn sr-btn" data-original-title="" title=""><i
-                        class="fa fa-search"></i></button>
-            </div>
-        </form>
     </div>
     <div class="inbox-body">
         <div class="mail-option">
@@ -91,13 +84,17 @@
             {% for object in object_list %}
             <tr>
                 <td class="inbox-small-cells">
-                    <input type="checkbox" class="mail-checkbox">
+                    <input type="checkbox" class="mail-checkbox messageCheckbox test" name="checks[]"
+                           value='{{ object.email.id }}'>
                 </td>
                 <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
-                <td class="view-message  dont-show">{{ object.email.body}}</td>
+                <td class="view-message  dont-show"><a href="{%url 'detail_email' object.email.id%}">{{ object.email.author }}</a></td>
+
                 <td class="view-message "><a href="{%url 'detail_email' object.email.id%}">{{ object.email.subject }}</a></td>
+
                 <td class="view-message  inbox-small-cells"><i class="fa fa-paperclip"></i></td>
-                <td class="view-message  text-right">{{ object.email.created_date }}</td>
+                <td class="view-message  text-right"><a href="{%url 'detail_email' object.email.id%}">{{ object.email.created_date }}</a></td>
+
             </tr>
             {% endfor %}
             </tbody>

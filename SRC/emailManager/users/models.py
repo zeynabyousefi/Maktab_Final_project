@@ -33,13 +33,19 @@ class Contact(models.Model):
     phone = models.CharField(max_length=20, null=True,
                              blank=True)
     name = models.CharField(max_length=80)
-    email = models.EmailField(null=True, blank=True, unique=True)
+    email = models.EmailField(null=True, blank=True)
     time = models.DateTimeField(auto_now_add=True)
     birthdate = models.DateField(null=True, blank=True)
     USERNAME_FIELD = 'name'
 
     def __str__(self):
         return f'name: {self.name}, phone: {self.phone}, email: {self.email}'
+
+
+class Signature(models.Model):
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=300, null=True, blank=True)
+    content = models.TextField(max_length=2000, null=True, blank=True)
 
 
 class OtpCode(models.Model):
