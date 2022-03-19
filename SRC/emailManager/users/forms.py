@@ -107,3 +107,11 @@ class AddContact(forms.ModelForm):
         widgets = {
             'birthdate': DateInput(),
         }
+
+
+class AddSignatureForm(forms.ModelForm):
+    class Meta:
+        model = Signature
+        fields = ['name',
+                  'content',
+                  ]
