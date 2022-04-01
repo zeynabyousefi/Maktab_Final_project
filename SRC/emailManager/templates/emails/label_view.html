@@ -1,0 +1,100 @@
+{% extends 'layout/_base.html' %}
+{% load static %}
+{% block head_css_page %}
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/email_inbox.css' %}">
+{% endblock head_css_page %}
+{% block head_javasciprt_page %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock head_javasciprt_page %}
+{% block title %}{{place_holder}}{% endblock title %}
+{% block nav-style %}mkt-nav{% endblock nav-style %}
+
+{% block content %}
+{% block mail_box_body %}
+<aside class="lg-side">
+    <div class="inbox-head">
+        <h3>{{email.place_holder}}</h3>
+    </div>
+    <div class="inbox-body">
+        <div class="mail-option">
+            <div class="chk-all">
+                <input type="checkbox" class="mail-checkbox mail-group-checkbox">
+                <div class="btn-group">
+                    <a class="btn mini all" href="#" data-toggle="dropdown" data-original-title=""
+                       title="">
+                        All
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> None</a></li>
+                        <li><a href="#"> Read</a></li>
+                        <li><a href="#"> Unread</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="btn-group">
+                <a class="btn mini tooltips" href="#" data-toggle="dropdown" data-placement="top"
+                   data-original-title="Refresh">
+                    <i class=" fa fa-refresh"></i>
+                </a>
+            </div>
+            <div class="btn-group hidden-phone">
+                <a class="btn mini blue" href="#" data-toggle="dropdown" data-original-title=""
+                   title="">
+                    Move To
+                    <i class="fa fa-angle-down "></i>
+                </a>
+<!--                <ul class="dropdown-menu">-->
+<!--                    <li><a href="#"><i class="fa fa-pencil"></i> Mark as Read</a></li>-->
+<!--                    <li><a href="#"><i class="fa fa-ban"></i> Spam</a></li>-->
+<!--                    <li class="divider"></li>-->
+<!--                    <li><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>-->
+<!--                    {% for labels in label %}-->
+<!--                    <li><a href="#"><i class="fa fa-pencil"></i>{{labels.place_holder}}</a></li>-->
+<!--                    {% endfor %}-->
+
+<!--                </ul>-->
+            </div>
+                 <a href="{% url 'label_delete'  place_holder %}" class="btn btn-danger">Delete</a>
+
+            <ul class="unstyled inbox-pagination">
+                <li><span>1-50 of 234</span></li>
+                <li>
+                    <a href="#" class="np-btn"><i class="fa fa-angle-left  pagination-left"></i></a>
+                </li>
+                <li>
+                    <a href="#" class="np-btn"><i
+                            class="fa fa-angle-right pagination-right"></i></a>
+                </li>
+            </ul>
+        </div>
+        <table class="table table-inbox table-hover">
+            <tbody>
+            {% for email in email %}
+            <tr>
+                <td class="inbox-small-cells">
+                    <input type="checkbox" class="mail-checkbox messageCheckbox test" name="checks[]"
+                           value='{{ object.email.id }}'>
+                </td>
+                <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                <td class="view-message  dont-show"><a href="{%url 'detail_email' email.email.id%}">{{ email.email.author }}</a></td>
+
+                <td class="view-message "><a href="{%url 'detail_email' email.email.id%}">{{ email.email.subject }}</a></td>
+
+                <td class="view-message  inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                <td class="view-message  text-right"><a href="{%url 'detail_email' email.email.id%}">{{ email.email.created_date }}</a></td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</aside>
+{% endblock mail_box_body %}
+
+{% endblock content %}
+{% block footer_javascript_page %}
+{% endblock footer_javascript_page %}
