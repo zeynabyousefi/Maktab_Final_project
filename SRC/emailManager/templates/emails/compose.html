@@ -5,22 +5,25 @@
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="{% static 'css/email_inbox.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 {% endblock head_css_page %}
 {% block head_javasciprt_page %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 {% endblock head_javasciprt_page %}
 {% block title %}New Email{% endblock title %}
 {% block nav-style %}mkt-nav{% endblock nav-style %}
 
 {% block content %}
- {% block mail_box_body %}
-    {% include 'layout/messages.html' %}
-     <aside class="lg-side">
-        <div class="inbox-head">
-            <h3>Compose</h3>
-        </div>
-        <div class="inbox-body">
+{% block mail_box_body %}
+{% include 'layout/messages.html' %}
+<aside class="lg-side">
+    <div class="inbox-head">
+        <h3>Compose</h3>
+    </div>
+    <div class="inbox-body">
         <h2 style="color: #1c7430">Compose</h2>
         <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
@@ -28,68 +31,99 @@
                 <label class="col-lg-2 control-label">To</label>
                 <div class="col-lg-10">
                     <input type="text" class="form-control" id="inputEmail1"
-                        placeholder="" name="to">
+                           placeholder="" name="to">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label">Cc</label>
-            <div class="col-lg-10">
-                <input type="text" class="form-control" id="cc" placeholder="" name="cc">
+            <div class="form-group">
+                <label class="col-lg-2 control-label">Cc</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="cc" placeholder="" name="cc">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label">Bcc</label>
-            <div class="col-lg-10">
-                <input type="text" class="form-control" id="bcc" placeholder="" name="bcc">
+            <div class="form-group">
+                <label class="col-lg-2 control-label">Bcc</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="bcc" placeholder="" name="bcc">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label">Subject</label>
-            <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputPassword1"
-                       placeholder="" name="subject">
+            <div class="form-group">
+                <label class="col-lg-2 control-label">Subject</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="inputPassword1"
+                           placeholder="" name="subject">
+                </div>
             </div>
-        </div>
-         <div class="btn-group hidden-phone">
-            <ul class="dropdown-menu">
-             <li class="divider">hi</li>
-             <li class="divider"></li>
-            {% for signature in signatures %}
-                <li><a href="" id="signature"><i class="fa fa-pencil"></i>{{signature.name}}</a></li>
-            {% endfor %}
-            <li>Hello</li>
-            </ul>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label">Message</label>
-            <div class="col-lg-10">
+
+            <div class="form-group">
+                <label class="col-lg-2 control-label">Message</label>
+                <div class="col-lg-10">
                 <textarea name="body" id="body" class="form-control" cols="30"
-                          rows="10" ></textarea>
+                          rows="10"></textarea>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
             <span class="btn green fileinput-button" data-original-title=""
                   title="">
               <i class="fa fa-plus fa fa-white"></i>
               <span>Attachment</span>
               <input type="file" multiple="" name="file">
             </span>
-                <button type="submit" class="btn btn-send"
-                        data-original-title="" title="">Send
-                </button>
+                    <button type="submit" class="btn btn-send"
+                            data-original-title="" title="">Send
+                    </button>
+                    <div class="btn-group hidden-phone">
+                        <a class="btn mini blue" data-toggle="dropdown" data-original-title=""
+                           title="">
+                            Add Signature
+                            <i class="fa fa-angle-down "></i>
+                        </a>
+                        <ul class="dropdown-menu" id="dropdownlist">
+
+                            {% for signature in signatures %}
+                            <li><a id="signature"><i class="fa fa-pencil"></i><span>{{signature.content}}</span></a></li>
+                            {% endfor %}
+
+
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
-    </form>
+<!--      -->
+        </form>
     </div>
-     </aside>
+
+</aside>
+
+<!--<script src="https://cdn.ckeditor.com/ckeditor5/33.0.0/classic/ckeditor.js"></script>-->
+<script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+        <script src="./jquery-3.6.0.min.js"></script>
+       <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('body');
+            $('.dropdown-menu li a').click(function (e) {
+                e.preventDefault();
+                var text = $(this).text();
+                var bodyText = CKEDITOR.instances.body.getData();
+                var newText = bodyText + "\n\r" + text + "\n";
+                insertIntoCkeditor(newText)
+
+            });
+            function insertIntoCkeditor(str) {
+                CKEDITOR.instances.body.setData(str);
+            }
+        });
+    </script>
+
+
+
 {% endblock mail_box_body %}
 {% endblock content %}
 {% block footer_javascript_page %}
-    <script>
-        $( "#signature" ).click(function() {
-            $('#body').append({{ signature.content }});
-        });
-    </script>
+
 {% endblock footer_javascript_page %}
 

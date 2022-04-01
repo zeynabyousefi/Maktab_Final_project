@@ -32,6 +32,10 @@ class Index(View):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
+            inbox_view =  EmailPlaceHolders.objects.get(place_holder="inbox")
+            user_is_read = UserEmailMapped.objects.filter(place_holder=inbox_view,is_read=False,user=request.user).count()
+            print("M"*80)
+            print(user_is_read)
             return redirect('email_view')
         else:
             return render(request, 'layout/_base.html')

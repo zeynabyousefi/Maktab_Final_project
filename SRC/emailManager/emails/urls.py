@@ -11,6 +11,7 @@ urlpatterns = [
     path('#archive-add/<int:email_id>/', EmailArchiveAdd.as_view(), name='add_email_archive'),
     path('detail/<int:email_id>/', DetailEmailView.as_view(), name='detail_email'),
     path('add-label/', AddLabelView.as_view(), name='add_label'),
+    path('add-label-filter/', AddLabelFilter.as_view(), name='add_label_filter'),
     path('#trash/', EmailTrashView.as_view(), name='email_trash'),
     path('delete-email/<int:email_id>/', DeleteEmail.as_view(), name='delete_email'),
     path('detail_label/<int:label_id>/', DetailLabel.as_view(), name='detail_label'),
