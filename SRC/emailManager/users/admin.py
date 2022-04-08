@@ -22,7 +22,7 @@ admin.site.register(OtpCode)
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ("owner_contact", "name",)  # display these table columns in the list view
+    list_display = ("owner_contact", "name",)
     ordering = ("-time",)
     date_hierarchy = "time"
 
@@ -102,7 +102,6 @@ class CustomAdmin(admin.ModelAdmin):
     def size_of_upload_file(self, obj):
         user_files = Email.objects.filter(author=obj).exclude(attachment__isnull=False, attachment=None)
         total = sum(int(objects.attachment_size) for objects in user_files if objects.attachment_size)
-        size = sizify(total)
         print("{" * 90)
         print(total)
         return total

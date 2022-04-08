@@ -275,7 +275,8 @@ class EmailSentboxView(LoginRequiredMixin, View):
     def get(self, request):
         place_holder = EmailPlaceHolders.objects.get(place_holder='sentbox')
         print(place_holder)
-        user_sentbox = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder)
+        user_sentbox = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder).order_by(
+            'email__-created_date')
         # email_user = Email.objects.filter(author=request.user)
         email_receiver = EmailReceiver
         return render(request, self.template_name, {"object_list": user_sentbox, "receiver": email_receiver})
@@ -287,7 +288,8 @@ class EmailInboxView(LoginRequiredMixin, View):
 
     def get(self, request):
         place_holder = EmailPlaceHolders.objects.get(place_holder='inbox')
-        user_inbox = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder)
+        user_inbox = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder).order_by(
+            'email__-created_date')
         for mail in user_inbox:
 
             # print("*%"*79)
@@ -301,7 +303,7 @@ class EmailInboxView(LoginRequiredMixin, View):
                     if mail.email == filters.email:
                         print("*%" * 79)
                         print(mail.email == filters.email)
-                        user_inbox = user_inbox.filter(email=filters.email)
+                        user_inbox = user_inbox.filter(email=filters.email).order_by('email__-created_date')
                         user_inbox.update(place_holder=filters.place_holder)
 
         return render(request, self.template_name, {'inbox': user_inbox})
@@ -314,7 +316,7 @@ class EmailDraftsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         place_holder = EmailPlaceHolders.objects.get(place_holder='drafts')
         print(place_holder)
-        return UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder)
+        return UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder).order_by('email__-created_date')
 
 
 class DetailEmailView(LoginRequiredMixin, View):
@@ -355,7 +357,7 @@ class AddLabelView(LoginRequiredMixin, View):
         return EmailPlaceHolders.objects.filter(creator=self.request.user)
 
     def get(self, request):
-        label = EmailPlaceHolders.objects.filter(creator=request.user)
+        label = EmailPlaceHolders.objects.filter(creator=request.user).order_by('email__-created_date')
         return render(request, 'emails/add_label.html')
 
     def post(self, request):
@@ -385,7 +387,7 @@ class EmailTrashView(LoginRequiredMixin, View):
 
     def get(self, request):
         place_holder = EmailPlaceHolders.objects.get(place_holder='trash')
-        user_trash = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder)
+        user_trash = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder).order_by('email__-created_date')
         for emails in user_trash:
             days = emails.email.created_date + datetime.timedelta(days=30)
             user_trash_02 = UserEmailMapped.objects.filter(user=self.request.user, place_holder=place_holder,
@@ -412,7 +414,7 @@ class LabelView(LoginRequiredMixin, View):
     template_name = 'emails/inbox.html'
 
     def get(self, request):
-        label = EmailPlaceHolders.objects.filter(creator=request.user)
+        label = EmailPlaceHolders.objects.filter(creator=request.user).order_by('email__-created_date')
         print('3' * 90)
         print(label)
         print('3' * 90)
@@ -468,7 +470,7 @@ class EmailArchiveView(LoginRequiredMixin, View):
 
     def get(self, request):
         place_holder = EmailPlaceHolders.objects.get(place_holder='archive')
-        email = UserEmailMapped.objects.filter(place_holder=place_holder, user=request.user)
+        email = UserEmailMapped.objects.filter(place_holder=place_holder, user=request.user).order_by('email__-created_date')
         for mail in email:
             if Filter.objects.filter(user=request.user, subject=mail.email.subject, sender=mail.email.author).exists():
                 filtering = Filter.objects.filter(user=request.user, subject=mail.email.subject,

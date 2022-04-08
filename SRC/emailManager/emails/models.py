@@ -24,8 +24,11 @@ class Email(models.Model):
 
     @property
     def attachment_size(self):
-        if self.attachment and hasattr(self.attachment, "size"):
+        if self.attachment != 'False' and hasattr(self.attachment, "size"):
             return self.attachment.size
+
+    class Meta:
+        ordering = ['-created_date']
 
 
 class EmailReceiver(models.Model):
