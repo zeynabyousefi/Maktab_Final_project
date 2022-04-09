@@ -1,15 +1,13 @@
-from django.test import TestCase
+from django.test import TestCase,Client
 from django.urls import reverse, resolve
 from .urls import *
 from .models import *
 from .views import *
 from django.conf import settings
-from django.test import Client
 
 
 class CustomUserTest(TestCase):
     def setUp(self):
-        self.client = Client()
         user_01 = CustomUser(username='zeynabyousefi@email.com', recovery_email="zeynabyousefi1380@gmail.com")
         user_01_p = "0926017616z"
         self.user_01_p = user_01_p
@@ -70,8 +68,11 @@ class ContactViewsTest(TestCase):
     def setUp(self):
         # Create  user
         self.test_dict = {}
-        self.client1 = Client()
-        self.test_user1 = CustomUser.objects.create(username='testuser1', password='test')
+        self.client=Client()
+
+        self.test_user1 = CustomUser.objects.create_user(username='testuser1', password='1X<ISRUkw+tuK',
+                                                         recovery_email="gsh@shs.com",
+                                                         phone_number=123222222)
         print(":::" * 190)
         print(self.test_user1.password)
         self.test_dict.update({"key": self.test_user1.password})
@@ -106,16 +107,16 @@ class ContactViewsTest(TestCase):
     # url = "/accounts/login/?next=/all-users/"
 
     def test_view_works_for_logged_in_user(self):
-        user = authenticate(username='testuser1', password='test')
-
-        test_user1 = CustomUser.objects.get(username='testuser1', password='test')
-        print(":88::" * 190)
-        print(test_user1)
+        user = authenticate(username='testuser1', password='1X<ISRUkw+tuK')
+        #
+        # test_user1 = CustomUser.objects.get(username='testuser1', password=self.test_user1.password)
+        print(":88:0:" * 190)
+        # print(test_user1.password)
         print(user)
         # # test_user1.save()
-        log = self.client1.login(username=test_user1.username, password=test_user1.password)
+        log = self.client.login(username='testuser1', password='1X<ISRUkw+tuK')
         self.assertTrue(log)
-        #
+        # #
         # response = self.client.get(reverse('all_contacts'))
         #
         # # Check our user is logged in

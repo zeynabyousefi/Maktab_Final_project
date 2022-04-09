@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'email',
         'USER': 'postgres',
-        'PASSWORD': '1234',
+        'PASSWORD': '0926017616',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -181,6 +181,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20
 }
-# LOGIN_URL = 'users/login/'
+LOGIN_URL = '/users/login/'
 APPEND_SLASH: bool = True
 
