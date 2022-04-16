@@ -27,9 +27,6 @@ class Email(models.Model):
         if self.attachment != 'False' and hasattr(self.attachment, "size"):
             return self.attachment.size
 
-    class Meta:
-        ordering = ['-created_date']
-
 
 class EmailReceiver(models.Model):
     email = models.ForeignKey(Email, on_delete=models.CASCADE)

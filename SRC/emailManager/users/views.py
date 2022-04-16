@@ -1,5 +1,6 @@
 import csv
 import random
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
@@ -25,19 +26,16 @@ from django.contrib.auth import authenticate, login, logout
 from emails.models import *
 from django.contrib.auth import authenticate
 from emails.forms import SearchBox
+import logging
+from django.http import JsonResponse
 
+logger = logging.getLogger(__name__)
 
-# Create your views here.
 
 class Index(View):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            inbox_view = EmailPlaceHolders.objects.get(place_holder="inbox")
-            user_is_read = UserEmailMapped.objects.filter(place_holder=inbox_view, is_read=False,
-                                                          user=request.user).count()
-            print("M" * 80)
-            print(user_is_read)
             return redirect('email_view')
         else:
             return render(request, 'layout/_base.html')
@@ -58,6 +56,7 @@ class UserRegister(View):
                 user = form.save(commit=False)
                 user.is_active = False
                 user.save()
+                logger.warning(f"the user with {form.cleaned_data['username']} is created not activated!")
                 current_site = get_current_site(request)
 
                 mail_subject = 'Activate your blog account.'
@@ -74,6 +73,7 @@ class UserRegister(View):
                 email.send()
                 messages.success(request, 'Please Confirm your email to complete registration.')
                 messages.success(request, 'we sent you email', 'success')
+                logger.info(f"the activate email sent to {form.cleaned_data['recovery_email']}")
             elif form.cleaned_data['phone_number']:
                 random_code = random.randint(1000, 9999)
                 send_otp_code(form.cleaned_data['phone_number'], random_code)
@@ -90,6 +90,7 @@ class UserRegister(View):
                     'gender': form.cleaned_data['gender'],
                 }
                 messages.success(request, 'we sent you a code', 'success')
+                logger.info(f"the message sent to {form.cleaned_data['phone_number']}")
                 return redirect('verify_code')
             return render(request, self.template_name, {'forms': form})
 
@@ -98,6 +99,7 @@ class UserRegister(View):
                            f"You must be enter email or phone number!!!!",
                            extra_tags='permanent error')
             storage = messages.get_messages(request)
+            logger.error('You must be enter email or phone number!!!!')
             for message in storage:
                 print(message)
             storage.used = False
@@ -116,13 +118,10 @@ def activate(request, uidb64, token, *args, **kwargs):
         user.is_active = True
         user.username += '@email.com'
         user.save()
-        # folders = ['inbox', 'sentbox', 'trash', 'draft']
-        # for folder in folders:
-        #     email_place_holder = EmailPlaceHolders()
-        #     email_place_holder.place_holder = folder
-        #     email_place_holder.save()
+        logger.info(f"{user.username} activated successfully")
         login(request, user)
-        # return redirect('home')
+        logger.info(f"{user.username} logged in.")
+
         return redirect('email_view')
     else:
         return HttpResponse('Activation link is invalid!')
@@ -163,30 +162,22 @@ class UserRegisterVerifyCodeView(View):
                 user.is_active = True
                 user.username += '@email.com'
                 user.save()
-                # folders = ['inbox', 'sentbox', 'trash', 'draft']
-                # for folder in folders:
-                #     email_place_holder = EmailPlaceHolders()
-                #     email_place_holder.place_holder = folder
-                #     email_place_holder.save()
-                # CustomUser.save()
+                logger.info(f"{user.username} activated successfully.")
 
                 code_instance.delete()
                 messages.success(request, 'you registered.', 'success')
                 login(request, user)
+                logger.info(f"{user.username} is logged in.")
                 return redirect("email_view")
             else:
                 messages.error(request, 'this code is wrong', 'danger')
+                logger.error(f"the code is entered wrong!")
                 return redirect('verify_code')
 
 
 class UserLogin(View):
     form_class = UserLoginForm
     template_name = 'users/login.html'
-
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.user.is_authenticated:
-    #         return redirect('home')
-    #     return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
         form = self.form_class
@@ -200,15 +191,14 @@ class UserLogin(View):
             if user_login.check_password(cd['password']):
                 login(request, user_login)
                 messages.success(request, 'you logged successfully ', 'success')
+                logger.info(f"{cd['username']} logged in successfully.")
                 return redirect('email_view')
-            # user = authenticate(request, username=cd["username"], password=cd['password'])
-            # if user is not None:
-            #     login(request, user)
-            #     messages.success(request, 'you logged successfully ', 'success')
-            #     return redirect('home')
+
             messages.error(request, "user name or password is wrong", 'error')
+            logger.warning(f"{cd['username']} entered username or password wrong!")
             return render(request, self.template_name, {"forms": form})
-        return redirect('user_login')
+        return render(request, self.template_name, {"forms": form})
+
 
 
 class ResetPassword(View):
@@ -246,9 +236,11 @@ class ResetPassword(View):
                 )
                 email.send()
                 messages.success(request, 'Please Confirm your email to reset password.')
+                logger.info(f"Email sent to {to_email} to reset password.")
                 return HttpResponse('Link sent to your email!')
             if not form.cleaned_data['recovery_email']:
                 messages.warning(request, 'This email does not exist!!')
+                logger.warning(f"Email {form.cleaned_data['recovery_email']} does not exist.")
             if form.cleaned_data['phone_number']:
                 random_code = random.randint(1000, 9999)
                 send_otp_code(form.cleaned_data['phone_number'], random_code)
@@ -257,6 +249,7 @@ class ResetPassword(View):
                     'phone_number': form.cleaned_data['phone_number']
                 }
                 messages.success(request, 'we sent you a code', 'success')
+                logger.info(f"Code sent to {form.cleaned_data['phone_number']}")
                 return redirect('reset_password_confirm_phone')
             return render(request, self.template_name, {'forms': form})
 
@@ -264,6 +257,7 @@ class ResetPassword(View):
             messages.error(request,
                            f"You must be enter email or phone number!!!!",
                            extra_tags='permanent error')
+            logger.error(f"email or phone number must be enter!!")
             storage = messages.get_messages(request)
             for message in storage:
                 print(message)
@@ -289,6 +283,7 @@ def reset_password_confirm(request, uidb64, token, *args, **kwargs):
                 user_complete_new_password = form.cleaned_data['password1']
                 user.set_password(user_complete_new_password)
                 user.save()
+                logger.info(f"{user.username} reset password successfully by email")
                 return redirect('user_login')
     else:
         return HttpResponse('Activation link is invalid!')
@@ -330,6 +325,7 @@ class ResetPasswordConfirmByPhone(View):
             user_complete_new_password = form.cleaned_data['password1']
             user.set_password(user_complete_new_password)
             user.save()
+            logger.info(f"{user.username} reset password successfully by phone number.")
             messages.success(request, 'your password confirmed successfully.', 'success')
             return redirect('user_login')
 
@@ -339,6 +335,7 @@ class UserLogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.success(request, 'you logout successfully', 'success')
+        logger.info(f"{request.user} logged out.")
         return redirect('home')
 
 
@@ -358,6 +355,7 @@ class UserContactView(LoginRequiredMixin, View):
             new_contact.owner_contact = request.user
             new_contact.save()
             messages.success(request, f'You Add {cd["name"]} in your contact', 'success')
+            logger.info(f"{request.user} added {cd} to contacts.")
             return redirect('email_view')
         return HttpResponse(form.errors)
 
@@ -379,6 +377,7 @@ class DetailContactView(LoginRequiredMixin, View):
 
     def get(self, request, contact_id):
         contact = Contact.objects.get(pk=contact_id)
+        logger.info(f"{request.user} deleted {contact.name} from contact list.")
         return render(request, self.template, {'contact': contact})
 
 
@@ -409,6 +408,7 @@ class Update(LoginRequiredMixin, View):
             update_conatct = form.save(commit=False)
             update_conatct.owner_contact = request.user
             update_conatct.save()
+            logger.info(f"{request.user} updated info of  {update_conatct.name}.")
             messages.success(request, "updated post", 'success')
             return redirect('detail_contact', update_conatct.id)
 
@@ -417,6 +417,7 @@ class ContactDelete(LoginRequiredMixin, View):
     def get(self, request, contact_id):
         contact = Contact.objects.get(pk=contact_id)
         contact.delete()
+        logger.info(f"{request.user} deleted {contact.name} from contact list.")
         messages.success(request, "delete was successfully", 'success')
         return redirect('all_contacts')
 
@@ -431,6 +432,7 @@ def export_contact_csv(request):
     studs = contacts.values_list('id', 'owner_contact', 'phone', 'name', 'email', 'birthdate')
     for std in studs:
         writer.writerow(std)
+    logger.info(f"{request.user} exported contact csv file.")
     return response
 
 
@@ -455,6 +457,7 @@ class SearchContacts(LoginRequiredMixin, View):
                         Q.OR
                     )
                 search = Contact.objects.filter(final_query, owner_contact=request.user)
+                logger.info(f"{request.user} searched {cd} in contacts.")
         return render(request, 'users/search_contact.html', {'search': search})
 
 
@@ -471,4 +474,39 @@ class AddSignature(LoginRequiredMixin, View):
             add_signature = form.save(commit=False)
             add_signature.owner = request.user
             add_signature.save()
+            logger.info(f"{request.user} added {add_signature.name}.")
             return redirect('setting')
+
+
+@login_required(redirect_field_name='login')
+def search_contacts(request):
+    if request.method == 'POST':
+        cd = json.loads(request.body).get('searchText')
+        user_contacts = Contact.objects.filter(owner_contact=request.user)
+        final_query = Q()
+        for item in user_contacts:
+            final_query.add(
+                Q(
+                    name__icontains=cd,
+
+                ) |
+                Q(email__icontains=cd) |
+                Q(phone__icontains=cd),
+                Q.OR
+            )
+
+        data = Contact.objects.filter(final_query, owner_contact=request.user).values()
+        logger.info(f"User {request.user} searched {cd}")
+        # data = emails.values()
+        # for email in data:
+        #     email_object = Email.objects.get(pk=email['email_id'])
+        #     email['user_id'] = email_object.author.username
+        #     email['created_date'] = email_object.created_date.date()
+        #     email['id'] = email_object.subject
+        print('#' * 80)
+        print(len(data))
+        print(data)
+        print("*" * 80)
+        print(list(data))
+        print('#' * 80)
+        return JsonResponse(list(data), safe=False)  # safe let to return a not json response

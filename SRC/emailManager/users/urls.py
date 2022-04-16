@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
 from .api import *
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('register/', UserRegister.as_view(), name='user_register'),
@@ -25,5 +26,5 @@ urlpatterns = [
     path('add-signature/', AddSignature.as_view(), name="add_signature"),
     path('api-contact/', detail_contact, name="api_contact"),
     path('api-email/', detail_email, name="api_email"),
-
+    path('search-contacts/', csrf_exempt(search_contacts), name="search_contacts"),
 ]

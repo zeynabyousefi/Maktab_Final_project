@@ -183,4 +183,3 @@ REST_FRAMEWORK = {
 }
 LOGIN_URL = '/users/login/'
 APPEND_SLASH: bool = True
-

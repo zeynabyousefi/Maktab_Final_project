@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.views.decorators.csrf import csrf_exempt
 from .views import *
 
 urlpatterns = [
@@ -20,6 +20,9 @@ urlpatterns = [
     path('label_view/', LabelView.as_view(), name='label_view'),
     path('search/', Search.as_view(), name='search'),
     path('setting/', Setting.as_view(), name='setting'),
+    path('search-email/', csrf_exempt(search_email), name="search_email"),
+    path('change-theme/', ChangeTheme.as_view(), name="change_theme"),
+
     # path('delete-email/', trash_email, name='trash'),
 
 ]

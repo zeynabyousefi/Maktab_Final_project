@@ -4,7 +4,7 @@ from kavenegar import *
 
 def send_otp_code(phone_number, code):
     try:
-        api = KavenegarAPI('653168444F61354169375251423577713448526B79545A766D424E5059524C4F3132667A586F6E76432F6B3D')
+        api = KavenegarAPI('7374545872633753574B653031727362456F68534837677A6A5334325352502F584E4F656C315768486A673D')
         params = {
             'sender': '',
             'receptor': phone_number,
