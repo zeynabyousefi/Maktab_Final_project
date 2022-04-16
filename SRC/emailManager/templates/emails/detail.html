@@ -96,7 +96,7 @@
                 <div style="border: #1c7430 dashed 2px">
                     <p class="view-message  text-left"><span
                             style="color: blue">Date Time:</span> {{ object.created_date }}</p>
-                    <p class="view-message  text-left"><span style="color: blue">Message:</span> {{ object.body }}</p>
+                    <p class="view-message  text-left"><span style="color: blue">Message:</span> {{ object.body|safe }}</p>
                     {% if not has_bcc %}
                         <p class="view-message  text-left" style="display: inline;"><span style="color: blue">To:</span>
                             {% for to in to.all %}

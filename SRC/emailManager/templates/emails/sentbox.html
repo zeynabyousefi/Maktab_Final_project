@@ -25,6 +25,10 @@
                         </div>
                         <div class="inbox-body">
                             <div class="mail-option">
+                                <form>
+                                    <input type="text" placeholder="Search email" name="searchText" id="searchField" style="color: #DC143C">
+                                </form>
+                                <br>
                                 <div class="chk-all">
                                     <input type="checkbox" class="mail-checkbox mail-group-checkbox">
                                     <div class="btn-group">
@@ -84,7 +88,7 @@
                                 </ul>
                             </div>
                             <table class="table table-inbox table-hover">
-                                <tbody>
+                                <tbody class="list_div">
                                 {% for object in object_list %}
                                 <tr>
                                     <td class="inbox-small-cells">
@@ -102,8 +106,16 @@
                                 </tr>
                                 {% endfor %}
                                 </tbody>
+                                <div class="result">
+                                    <p class="email_ajax_result"></p>
+                                    <ol class="list_ajax">
+                                    </ol>
+                                </div>
                             </table>
                         </div>
                     </aside>
  {% endblock mail_box_body %}
 {% endblock content %}
+{% block footer_javascript_page %}
+    <script src="{% static 'js/email_ajax.js' %}"></script>
+{% endblock footer_javascript_page %}

@@ -28,6 +28,8 @@
     <link rel="stylesheet"
           href="https://www.google.com/inbox/assets/static/css/main-f6170d064603edb9c17dd614c0fe7137.min.css"
           nonce="liFYiq-mg5Vz7h7wOrmBYQ">
+    <link href="../../static/css/style.css"
+          rel="stylesheet" media="screen">
     {% endblock head_css_site %}
     {% block head_css_section %}{% endblock head_css_section %}
     {% block head_css_page %}{% endblock head_css_page %}
@@ -38,7 +40,7 @@
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     {% endblock head_javasciprt_page %}
 </head>
-<body>
+<body id="body">
 {% include 'layout/messages.html' %}
 <header>
     {% if user.is_authenticated %}
@@ -55,14 +57,6 @@
                 </button>
 
                 <a class="navbar-brand" href="/">Email Manager</a>
-                <form class="pull-right position"  method="GET" action="{% url 'search' %}">
-                    <div style="display: flex; flex: fit-content">
-                        <p>{{form.search}}</p>
-                        <button type="submit" class="btn sr-btn" data-original-title="" title=""><i
-                            class="fa fa-search"></i></button>
-                    </div>
-
-                </form>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -109,13 +103,13 @@
                                                 <li class="active">
                                                     <a href="{% url 'email_view' %}"><i class="fa fa-inbox"></i> Inbox
                                                         <span
-                                                                class="label label-danger pull-right">2</span></a>
+                                                                class="label label-danger pull-right">{{read}}</span></a>
                                                 </li>
                                                 {% else %}
                                                 <li>
                                                     <a href="{% url 'email_view' %}"><i class="fa fa-inbox"></i> Inbox
                                                         <span
-                                                                class="label label-danger pull-right">2</span></a>
+                                                                class="label label-danger pull-right">{{read}}</span></a>
                                                 </li>
                                                 {% endif %}
                                                 {% if request.get_full_path == "/emails/%23sentbox/" %}
@@ -156,7 +150,8 @@
                                                                               href="{% url 'add_label' %}"> Create
                                                     Label</a></h4></li>
                                                 {% for label in labels %}
-                                                <li><a href="{% url 'detail_label' label.id %}">{{ label.place_holder}}</a></li>
+                                                <li><a href="{% url 'detail_label' label.id %}">
+                                                    {{label.place_holder}}</a></li>
                                                 {% endfor %}
                                             </ul>
                                             <div class="inbox-body text-center">
@@ -251,7 +246,7 @@
 {# The Footer #}
 <div class="footer">
     <div class="container">
-        <p>Zeynab Yousefi @2022</p>
+        <p>Zeynab Yousefi@2022</p>
     </div>
 </div>
 </body>
@@ -271,10 +266,12 @@
                 });
 
 
+
 </script>
 <script src="../../static/js/jquery.min.js"></script>
 <script src="../../static/js/bootstrap.min.js"></script>
 <script src="../../static/js/app.js"></script>
+<script src="../../static/js/change_theme.js"></script>
 <script type="text/javascript">
 </script>
 {% endblock footer_javascript_site %}
