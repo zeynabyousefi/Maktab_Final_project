@@ -2,9 +2,7 @@ from django.db import models
 from users.models import CustomUser
 import os
 from .validators import *
-
-
-# Create your models here.
+from ckeditor.fields import RichTextField
 
 
 def user_directory_path(instance, filename):
@@ -14,7 +12,7 @@ def user_directory_path(instance, filename):
 
 class Email(models.Model):
     subject = models.CharField(max_length=200, blank=True, null=True)
-    body = models.TextField(null=True, blank=True)
+    body = RichTextField()
     created_date = models.DateTimeField(auto_created=True, auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
     attachment = models.FileField(upload_to=user_directory_path, null=True, blank=True,
@@ -23,6 +21,11 @@ class Email(models.Model):
 
     def __str__(self):
         return f'author: {self.author.username} subject: {self.subject}'
+
+    @property
+    def attachment_size(self):
+        if self.attachment != 'False' and hasattr(self.attachment, "size"):
+            return self.attachment.size
 
 
 class EmailReceiver(models.Model):
@@ -40,7 +43,7 @@ class EmailReceiver(models.Model):
 
 
 class EmailPlaceHolders(models.Model):
-    place_holder = models.CharField(max_length=255,unique=True)
+    place_holder = models.CharField(max_length=255, unique=True)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
@@ -48,12 +51,23 @@ class EmailPlaceHolders(models.Model):
 
 
 class UserEmailMapped(models.Model):
-    email = models.ForeignKey(Email, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, blank=True, null=True)
-    place_holder = models.ForeignKey(EmailPlaceHolders, on_delete=models.DO_NOTHING)
+    email = models.ForeignKey(Email, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    place_holder = models.ForeignKey(EmailPlaceHolders, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False)
     is_starred = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.user}-{self.place_holder}'
 
+
+class Filter(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    email = models.ForeignKey(Email, on_delete=models.DO_NOTHING, null=
+    True, blank=True)
+    place_holder = models.ForeignKey(EmailPlaceHolders, on_delete=models.DO_NOTHING)
+    subject = models.CharField(max_length=100, null=True, blank=True)
+    sender = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.place_holder}-{self.subject}-{self.sender}'

@@ -21,16 +21,13 @@
     </div>
     <div class="inbox-body">
         <div class="mail-option">
-            <form class="pull-left position"  method="GET" action="{% url 'search_contact' %}">
-                    <div style="display: flex; flex-direction: row;">
-                        <p>{{form.search}}</p>
-                        <button type="submit" class="btn sr-btn" data-original-title="" title="" style="margin-left: 5px">Search contact</button>
-                    </div>
-
-                </form>
+            <form>
+                <input type="text" placeholder="Search contact" name="searchText" id="searchField" style="color: #DC143C">
+            </form>
+            <br>
         </div>
         <table class="table table-inbox table-hover">
-            <tbody>
+            <tbody class="list_div">
             <tr>
                 <td class="view-message  dont-show">Name</td>
                 <td class="view-message ">Email Address</td>
@@ -46,6 +43,11 @@
             </tr>
             {% endfor %}
             </tbody>
+            <div class="result">
+            <p class="email_ajax_result"></p>
+            <ol class="list_ajax">
+            </ol>
+            </div>
         </table>
     </div>
 </aside>
@@ -53,4 +55,5 @@
 
 {% endblock content %}
 {% block footer_javascript_page %}
+    <script src="{% static 'js/contact_ajax.js' %}"></script>
 {% endblock footer_javascript_page %}
